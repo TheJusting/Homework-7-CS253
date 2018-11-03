@@ -64,6 +64,24 @@ int Image::range() const{
         return Image::maxp;
 }
 
+void Image::min(const Image &a){
+    int col = Image::width(), row = Image::height(), g;
+    if(a.width() < col) col = a.width();
+    if(a.height() < row) row = a.height();
+    for(int i = 0; i < row; i++){
+        for(int j = 0; j < col; j++){
+            cout << "you fucked up\n";
+            if(image == "Alpha") g = Image::range() - v[row][col];
+            else g = v[row][col];
+            int lhs = g / Image::range(), rhs = a.get(col, row) / a.range();
+            lhs *= a.range();
+            rhs *= Image::range();
+            cout << "all good!\n";
+            if(rhs < lhs) v[row][col] = rhs;
+        }
+    }
+}
+
 void Image::mirror(){
     for(unsigned int i = 0; i < Image::v.size(); i++){
         for(unsigned int j = 0; j < (Image::v[i].size() / 2); j++){

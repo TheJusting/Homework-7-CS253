@@ -12,6 +12,7 @@ class Image{
                 int width() const;
                 int range() const;
                 virtual int get(int column, int row) const = 0;
+                void min(const Image &a);
                 void mirror();
                 void rotate(int degrees);
                 void resize(double factor);

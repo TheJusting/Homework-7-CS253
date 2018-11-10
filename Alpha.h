@@ -11,7 +11,6 @@ class Alpha : public Image{
                 ~Alpha();
                 Alpha &operator=(const Alpha &a);
                 friend std::ostream &operator<<(std::ostream &os, const Alpha &a);
-                int get(int column, int row) const;
                 void read(string filename);
                 void write(string filename) const;
                 void write(std::ostream &stream) const;

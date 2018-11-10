@@ -29,11 +29,6 @@ PGM &PGM::operator=(const PGM &a){
         return *this;
 }
 
-int PGM::get(int column, int row) const{
-        if(column > PGM::width() || column < 0 || row > PGM::height() || row < 0) throw string("Invalid arguments");
-        return v[row][column];
-}
-
 void PGM::read(const string filename){
         string in;
         vector<int> temp;

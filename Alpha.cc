@@ -24,14 +24,9 @@ Alpha &Alpha::operator=(const Alpha &a){
         return *this;
 }
 
-int Alpha::get(int column, int row) const{
-        if((unsigned int)column > v[0].size() || column < 0 || (unsigned int) row > v.size() || row < 0) throw string("Invalid arguments");
-        return Alpha::range() - v[row][column];
-}
-
 void Alpha::read(const string filename){
         string in;
-        maxp = 26;
+        maxp = 25;
         ifstream input(filename);
         unsigned int stCount = 0;
         getline(input, in);
@@ -42,7 +37,8 @@ void Alpha::read(const string filename){
                 for(unsigned int i = 0; i < in.length(); i++){
                         if(in[i] == '#') break;
                         else if(isalpha(in[i])){
-                                temp.push_back(tolower(in[i]) - 97);
+				int c(tolower(in[i]) - 122); 
+                                temp.push_back(abs(c));
                         }
                         else if(in[i] == ' ' || in[i] == '\t') continue;
                         else if(in[i] == '*'){
@@ -82,10 +78,10 @@ void Alpha::write(string filename) const{
         os.open(filename);
         os << image << "\n";
         for(auto i : v){
-                        for(auto j : i){
-                os << (char) (j + 97);
-                        }
-                        os << "\n";
+		for(auto j : i){
+                	os << (char) ((j*-1) + 122);
+                }
+                os << "\n";
         }
         os.close();
 }
@@ -94,7 +90,7 @@ void Alpha::write(ostream &stream) const{
         stream << image << "\n";
         for(auto i : v){
                         for(auto j : i){
-                stream << (char)(j + 97);
+                stream << (char)((j*-1) + 122);
                         }
                         stream << "\n";
         }
@@ -104,7 +100,7 @@ ostream &operator<<(ostream &os, const Alpha &a){
         string temp = "Alpha\n";
         for(auto i : a.v){
                 for(auto j : i){
-                        temp += to_string((char)(j+97));
+                        temp += to_string((char)((j*-1)+122));
                 }
                 temp += "\n";
         }

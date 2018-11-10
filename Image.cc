@@ -1,6 +1,7 @@
 #include "PGM.h"
 #include "Image.h"
 #include "Alpha.h"
+#include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -61,24 +62,44 @@ int Image::width() const{
 }
 
 int Image::range() const{
-        return Image::maxp;
+        return Image::maxp + 1;
+}
+
+int Image::get(int column, int row) const{
+	if(column >= Image::width() || column < 0 || row >= Image::height() || row < 0) throw string("Invalid arguments");
+	return v[row][column];
+}
+
+double Image::scale(int val, int range1, int range2){
+	return (val / (double)range1) * range2;
 }
 
 void Image::min(const Image &a){
-    int col = Image::width(), row = Image::height(), g;
+    int col = Image::width(), row = Image::height();
     if(a.width() < col) col = a.width();
     if(a.height() < row) row = a.height();
     for(int i = 0; i < row; i++){
         for(int j = 0; j < col; j++){
-            cout << "you fucked up\n";
-            if(image == "Alpha") g = Image::range() - v[row][col];
-            else g = v[row][col];
-            int lhs = g / Image::range(), rhs = a.get(col, row) / a.range();
-            lhs *= a.range();
-            rhs *= Image::range();
-            cout << "all good!\n";
-            if(rhs < lhs) v[row][col] = rhs;
-        }
+	    double lhs, rhs;
+	    bool lScaled = false;
+            if(a.range() < Image::range()){
+		rhs = Image::scale(a.get(j, i), a.range(), Image::range());
+		lhs = Image::get(j, i);
+	    }else if(Image::range() < a.range()){
+		lhs = Image::scale(Image::get(j, i), Image::range(), a.range());
+		rhs = a.get(j, i);
+		lScaled = true;
+	    }else{
+		lhs = Image::get(j, i);
+		rhs = a.get(j, i);
+	    }
+	    if(rhs < lhs){
+		if(lScaled){
+			rhs = Image::scale(rhs, a.range(), Image::range());
+			v[i][j] = rhs;
+		}else v[i][j] = rhs;
+	    }
+	}
     }
 }
 

@@ -11,7 +11,6 @@ class PGM : public Image{
                 ~PGM();
                 PGM &operator=(const PGM &a);
                 friend std::ostream &operator<<(std::ostream &os, const PGM &a);
-                int get(int column, int row) const;
                 void read(const string filename);
                 void write(const string filename) const;
                 void write(std::ostream &stream) const;

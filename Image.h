@@ -5,9 +5,8 @@
 using string = std::string;
 class Image{
         public:
-                string NW = "NW", NE = "NE", SW = "SW", SE = "SE";
+                const static int NW = 0, NE = 1, SW = 2, SE = 3;
                 static Image* create(const string filename);
-                static void scale(int val, int range1, int range2);
                 virtual ~Image();
                 bool empty() const;
                 int height() const;
@@ -17,7 +16,7 @@ class Image{
                 void min(const Image &a);
 				void min(string direction, const Image &a);
 				void minHelper(const Image &a, int j, int i, int j1, int i1)
-				void scale(int val, int range1, int range2);
+				double scale(int val, int range1, int range2);
                 void mirror();
                 void rotate(int degrees);
                 void resize(double factor);

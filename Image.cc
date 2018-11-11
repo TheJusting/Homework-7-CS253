@@ -48,6 +48,79 @@ Image &Image::operator=(const Image &a){
 
 Image::~Image(){}
 
+void Image::min(const Image &a){
+	Image::min(Image::NW, a);
+}
+
+void Image::min(string direction, const Image &a){
+	unsigned int col, row;
+	int end;
+	if(a.width() < Image::width()) col = a.width();
+	else col = Image::width();
+	if(a.height() < Image::height()) row = a.height();
+	else row = Image::height();
+	switch(direction){
+		case "NW":
+			for(auto i = 0; i < row; i++){
+				for(auto j = 0; j < col; j++){
+					Image::minHelper(a, j, i, j, i);
+				}
+			}
+			break;
+		case "NE":
+			for(auto i = 0; i < row; i++){
+				for(auto j = 0; j < col; j++){
+					Image::minHelper(a, Image::width-(1+j), i, a.width()-(1+j), i);
+				}
+			}
+			break;
+		case "SW":
+			for(auto i = 0; i < row; i++){
+				for(auto j = 0; j < col; j++){
+					Image::minHelper(a, j,Image::height()-(1+i), j, a.height()-(1+i)); 
+				}
+			}
+			break;
+		case "SE":
+			for(auto i = 0; i < row; i++){
+				for(auto j = 0; j < col; j++){
+					Image::minHelper(a, Image::width-(1+j), Image::height()-(1+i), a.width()-(1+k), a.height()-(1+i)); 
+				}
+			}
+			break;
+		default:
+			throw string("Invalid direction declaration " + direction);
+			break;
+	}
+}
+
+
+void minHelper(const Image &a, int j, int i, int j1, int i1){
+	double lhs, rhs;
+	bool lScaled = false;
+	if(a.range() < Image::range()){
+		rhs = Image::scale(a.get(j1, i1), a.range(), Image::range());
+		lhs = Image::get(j, i);
+	}else if(Image::range() < a.range()){
+		lhs = Image::scale(Image::get(j, i), Image::range(), a.range());
+		rhs = a.get(j1, i1);
+		lScaled = true;
+	}else{
+		lhs = Image::get(j, i);
+		rhs = a.get(j1, i1);
+	}
+	if(rhs < lhs){
+		if(lScaled){
+				rhs = Image::scale(rhs, a.range(), Image::range());
+				v[i][j] = rhs;
+		}else v[i][j] = rhs;
+	}
+}
+
+int scale(int val, int range1, int range2){
+        return (val / (double)range1) * range2;
+}
+
 bool Image::empty() const{
         if(Image::height() == 0 && Image::width() == 0) return true;
         else return false;

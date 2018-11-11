@@ -10,16 +10,16 @@ using namespace std;
 Image* Image::create(const string filename){
         Image* im;
         try{
-                ifstream in;
-                string name;
-                in.open(filename);
-                if(in.fail()) throw string("Bad File: file " + filename + " does not exist.");
-                else{
-                        in >> name;
-                        if(name == "P2") im = new PGM(filename);
-                        else if(name == "Alpha") im = new Alpha(filename);
-                        else throw string("Bad File: Expected \"Alpha\" or \"P2\", got " + name);
-                }
+			ifstream in;
+			string name;
+			in.open(filename);
+			if(in.fail()) throw string("Bad File: file " + filename + " does not exist.");
+			else{
+					in >> name;
+					if(name == "P2") im = new PGM(filename);
+					else if(name == "Alpha") im = new Alpha(filename);
+					else throw string("Bad File: Expected \"Alpha\" or \"P2\", got " + name);
+			}
         }catch(string Err){
                 cerr << Err << "\n";
         }
@@ -59,28 +59,28 @@ void Image::min(string direction, const Image &a){
 	if(a.height() < Image::height()) row = a.height();
 	else row = Image::height();
 	switch(direction){
-		case "NW":
+		case NW:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
 					Image::minHelper(a, j, i, j, i);
 				}
 			}
 			break;
-		case "NE":
+		case NE:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
 					Image::minHelper(a, Image::width-(1+j), i, a.width()-(1+j), i);
 				}
 			}
 			break;
-		case "SW":
+		case SW:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
 					Image::minHelper(a, j,Image::height()-(1+i), j, a.height()-(1+i)); 
 				}
 			}
 			break;
-		case "SE":
+		case SE:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
 					Image::minHelper(a, Image::width-(1+j), Image::height()-(1+i), a.width()-(1+k), a.height()-(1+i)); 
@@ -94,7 +94,7 @@ void Image::min(string direction, const Image &a){
 }
 
 
-void minHelper(const Image &a, int j, int i, int j1, int i1){
+void Image::minHelper(const Image &a, int j, int i, int j1, int i1){
 	double lhs, rhs;
 	bool lScaled = false;
 	if(a.range() < Image::range()){
@@ -116,7 +116,7 @@ void minHelper(const Image &a, int j, int i, int j1, int i1){
 	}
 }
 
-int scale(int val, int range1, int range2){
+double Image::scale(int val, int range1, int range2){
         return (val / (double)range1) * range2;
 }
 

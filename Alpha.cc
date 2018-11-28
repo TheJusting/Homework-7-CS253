@@ -48,7 +48,7 @@ void Alpha::read(const string filename){
                                         for(int j = 0; j < diff; j++) temp.push_back(temp[temp.size()-1]);
                                 }
                         }
-                        else if(in[i] != '\n') throw string("Bad File: bad character");
+                        else if(in[i] != '\n') throw string("Bad File: bad character " + in[i]);
                 }
                 if(temp.empty()) continue;
                 else if(v.empty() || (v.empty() && temp[temp.size()-1] == -1)){
@@ -64,7 +64,7 @@ void Alpha::read(const string filename){
                         }
                         v.push_back(temp);
                 }
-                else if(temp.size() > v[0].size() || temp.size() < v[0].size()) throw string("Bad File: incorrect line lengths");
+                else if(temp.size() > v[0].size() || temp.size() < v[0].size()) throw string("Bad File: incorrect line length of " + to_string(temp.size()) + "when expecting length of " + to_string(v[0].size()));
                 else if(stCount == v.size()) throw string("Bad File: all lines contain asterisks");
                 else v.push_back(temp);
         }

@@ -42,20 +42,20 @@ void PGM::read(const string filename){
                                 if(w == -1) w = stoi(in);
                                 else if (h == -1) h = stoi(in);
                                 else if (maxp == -1) maxp = stoi(in);
-                                else if(stoi(in) > maxp || stoi(in) < 0) throw string("Integer out of bounds");
+                                else if(stoi(in) > maxp || stoi(in) < 0) throw string(in + " out of bounds. Max value: " + to_string(maxp));
                                 else temp.push_back(stoi(in));
                         }
                         else if(in[0] == '#'){
                                 if(in.length() == 1) getline(input, in);
                                 continue;
                         }
-                        else throw string("Bad File: unexpected character");
+                        else throw string("Bad File: unexpected character " + in);
                         if(temp.size() == (unsigned int)w){
                                 v.push_back(temp);
                                 temp.clear();
                         }
         }
-        if(v.size() < (unsigned int)h || v[0].size() < (unsigned int)w || v.size() > (unsigned int)h || v[0].size() > (unsigned int)w) throw string("Bad File: incorrect image size");
+        if(v.size() < (unsigned int)h || v[0].size() < (unsigned int)w || v.size() > (unsigned int)h || v[0].size() > (unsigned int)w) throw string("Bad File: incorrect image size of " + to_string(v.size()) + "x" + to_string(v[0].size()));
         input.close();
 }
 

@@ -5,13 +5,8 @@
 using string = std::string;
 class Image{
         public:
-<<<<<<< HEAD
                 const static int NW = 0, NE = 1, SW = 2, SE = 3;
-=======
-                string NW = "NW", NE = "NE", SW = "SW", SE = "SE";
->>>>>>> 98a0ccacac415534d3a1121d23e88efa1a8c0b3f
                 static Image* create(const string filename);
-                static void scale(int val, int range1, int range2);
                 virtual ~Image();
                 bool empty() const;
                 int height() const;
@@ -19,19 +14,23 @@ class Image{
                 int range() const;
                 int get(int column, int row) const;
                 void min(const Image &a);
-<<<<<<< HEAD
-		double scale(int val, int range1, int range2);
-=======
-				void min(string direction, const Image &a);
-				void minHelper(const Image &a, int j, int i, int j1, int i1)
-				void scale(int val, int range1, int range2);
->>>>>>> 98a0ccacac415534d3a1121d23e88efa1a8c0b3f
+		void min(int direction, const Image &a);
+		void minHelper(const Image &a, int j, int i, int j1, int i1);
+		double scale(double val, int range1, int range2);
+		void max(const Image &a);
+		void max(int direction, const Image &a);
+		void maxHelper(const Image &a, int j, int i, int j1, int i1);
                 void mirror();
                 void rotate(int degrees);
                 void resize(double factor);
                 virtual void read(const string filename) = 0;
                 virtual void write(const string filename) const = 0;
                 virtual void write(std::ostream &stream) const = 0;
+		Image &operator-=(const Image &a);
+		Image &operator+=(const Image &a);
+		Image &operator/=(double d);
+		Image &operator*=(double d);
+		explicit operator bool() const;
         protected:
                 Image();
                 Image(const Image &a);
@@ -41,4 +40,3 @@ class Image{
                 int h, w, maxp;
 };
 #endif
-

@@ -1,7 +1,6 @@
 #include "PGM.h"
 #include "Image.h"
 #include "Alpha.h"
-#include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -10,20 +9,16 @@ using namespace std;
 
 Image* Image::create(const string filename){
         Image* im;
-        try{
-                ifstream in;
-                string name;
-                in.open(filename);
-                if(in.fail()) throw string("Bad File: file " + filename + " does not exist.");
-                else{
-                        in >> name;
-                        if(name == "P2") im = new PGM(filename);
-                        else if(name == "Alpha") im = new Alpha(filename);
-                        else throw string("Bad File: Expected \"Alpha\" or \"P2\", got " + name);
-                }
-        }catch(string Err){
-                cerr << Err << "\n";
-        }
+	ifstream in;
+	string name;
+	in.open(filename);
+	if(in.fail()) throw string("Bad File: file " + filename + " does not exist.");
+	else{
+		in >> name;
+		if(name == "P2") im = new PGM(filename);
+		else if(name == "Alpha") im = new Alpha(filename);
+		else throw string("Bad File: Expected \"Alpha\" or \"P2\", got " + name);
+	}
         return im;
 }
 
@@ -52,39 +47,38 @@ void Image::min(const Image &a){
 	Image::min(Image::NW, a);
 }
 
-void Image::min(string direction, const Image &a){
-	unsigned int col, row;
-	int end;
+void Image::min(int direction, const Image &a){
+	int col, row;
 	if(a.width() < Image::width()) col = a.width();
 	else col = Image::width();
 	if(a.height() < Image::height()) row = a.height();
 	else row = Image::height();
 	switch(direction){
-		case "NW":
+		case NW:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
 					Image::minHelper(a, j, i, j, i);
 				}
 			}
 			break;
-		case "NE":
+		case NE:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
-					Image::minHelper(a, Image::width-(1+j), i, a.width()-(1+j), i);
+					Image::minHelper(a, Image::width()-(1+j), i, a.width()-(1+j), i);
 				}
 			}
 			break;
-		case "SW":
+		case SW:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
 					Image::minHelper(a, j,Image::height()-(1+i), j, a.height()-(1+i)); 
 				}
 			}
 			break;
-		case "SE":
+		case SE:
 			for(auto i = 0; i < row; i++){
 				for(auto j = 0; j < col; j++){
-					Image::minHelper(a, Image::width-(1+j), Image::height()-(1+i), a.width()-(1+k), a.height()-(1+i)); 
+					Image::minHelper(a, Image::width()-(1+j), Image::height()-(1+i), a.width()-(1+j), a.height()-(1+i)); 
 				}
 			}
 			break;
@@ -95,14 +89,14 @@ void Image::min(string direction, const Image &a){
 }
 
 
-void minHelper(const Image &a, int j, int i, int j1, int i1){
+void Image::minHelper(const Image &a, int j, int i, int j1, int i1){
 	double lhs, rhs;
 	bool lScaled = false;
 	if(a.range() < Image::range()){
-		rhs = Image::scale(a.get(j1, i1), a.range(), Image::range());
+		rhs = Image::scale(a.get(j1, i1), a.range() - 1, Image::range() - 1);
 		lhs = Image::get(j, i);
 	}else if(Image::range() < a.range()){
-		lhs = Image::scale(Image::get(j, i), Image::range(), a.range());
+		lhs = Image::scale(Image::get(j, i), Image::range() - 1, a.range() - 1);
 		rhs = a.get(j1, i1);
 		lScaled = true;
 	}else{
@@ -111,18 +105,81 @@ void minHelper(const Image &a, int j, int i, int j1, int i1){
 	}
 	if(rhs < lhs){
 		if(lScaled){
-				rhs = Image::scale(rhs, a.range(), Image::range());
+				rhs = Image::scale(rhs, a.range() - 1, Image::range() - 1);
 				v[i][j] = rhs;
 		}else v[i][j] = rhs;
 	}
 }
 
-int scale(int val, int range1, int range2){
-        return (val / (double)range1) * range2;
+double Image::scale(double val, int range1, int range2){
+	val /= (double)range1;
+	val *= range2;
+        return val;
+}
+
+void Image::max(const Image &a){
+	Image::max(Image::NW, a);
+}
+
+void Image::max(int direction, const Image &a){
+	int col, row;
+	if(a.width() < Image::width()) col = a.width();
+	else col = Image::width();
+	if(a.height() < Image::height()) row = a.height();
+	else row = Image::height();
+	for(auto i = 0; i < row; i++){
+		for(auto j = 0; j < col; j++){
+			switch(direction){
+			case NW:
+				Image::maxHelper(a, j, i, j, i);
+				break;
+			case NE:
+				Image::maxHelper(a, Image::width()-(1+j), i, a.width()-(1+j), i);
+				break;
+			case SW:
+				Image::maxHelper(a, j,Image::height()-(1+i), j, a.height()-(1+i)); 
+				break;
+			case SE:
+				Image::maxHelper(a, Image::width()-(1+j), Image::height()-(1+i), a.width()-(1+j), a.height()-(1+i)); 
+				break;
+			default:
+				throw string("Invalid direction declaration " + direction);
+				break;
+			}
+		}
+	}
+}
+
+
+void Image::maxHelper(const Image &a, int j, int i, int j1, int i1){
+	double lhs, rhs;
+	bool lScaled = false;
+	if(a.range() < Image::range()){
+		rhs = Image::scale(a.get(j1, i1), a.range() - 1, Image::range() - 1);
+		lhs = Image::get(j, i);
+	}else if(Image::range() < a.range()){
+		lhs = Image::scale(Image::get(j, i), Image::range() - 1, a.range() - 1);
+		rhs = a.get(j1, i1);
+		lScaled = true;
+	}else{
+		lhs = Image::get(j, i);
+		rhs = a.get(j1, i1);
+	}
+	if(rhs > lhs){
+		if(lScaled){
+				rhs = Image::scale(rhs, a.range() - 1, Image::range() - 1);
+				v[i][j] = rhs;
+		}else v[i][j] = rhs;
+	}
+}
+
+int Image::get(int column, int row) const{
+	if(column >= Image::width() || column < 0 || row >= Image::width() || row < 0) throw string("Invalid parameters " + to_string(column) + ", " + to_string(row));
+	return v[row][column]; 
 }
 
 bool Image::empty() const{
-        if(Image::height() == 0 && Image::width() == 0) return true;
+        if(v.empty()) return true;
         else return false;
 }
 
@@ -138,44 +195,6 @@ int Image::range() const{
         return Image::maxp + 1;
 }
 
-int Image::get(int column, int row) const{
-	if(column >= Image::width() || column < 0 || row >= Image::height() || row < 0) throw string("Invalid arguments");
-	return v[row][column];
-}
-
-double Image::scale(int val, int range1, int range2){
-	return (val / (double)range1) * range2;
-}
-
-void Image::min(const Image &a){
-    int col = Image::width(), row = Image::height();
-    if(a.width() < col) col = a.width();
-    if(a.height() < row) row = a.height();
-    for(int i = 0; i < row; i++){
-        for(int j = 0; j < col; j++){
-	    double lhs, rhs;
-	    bool lScaled = false;
-            if(a.range() < Image::range()){
-		rhs = Image::scale(a.get(j, i), a.range(), Image::range());
-		lhs = Image::get(j, i);
-	    }else if(Image::range() < a.range()){
-		lhs = Image::scale(Image::get(j, i), Image::range(), a.range());
-		rhs = a.get(j, i);
-		lScaled = true;
-	    }else{
-		lhs = Image::get(j, i);
-		rhs = a.get(j, i);
-	    }
-	    if(rhs < lhs){
-		if(lScaled){
-			rhs = Image::scale(rhs, a.range(), Image::range());
-			v[i][j] = rhs;
-		}else v[i][j] = rhs;
-	    }
-	}
-    }
-}
-
 void Image::mirror(){
     for(unsigned int i = 0; i < Image::v.size(); i++){
         for(unsigned int j = 0; j < (Image::v[i].size() / 2); j++){
@@ -187,7 +206,7 @@ void Image::mirror(){
 }
 
 void Image::rotate(int degrees){
-        if(degrees % 90 != 0) throw string("Invalid degrees of rotation");
+        if(degrees % 90 != 0) throw string("Invalid degrees of rotation: must be a multiple of 90, but got " + to_string(degrees));
         else if(degrees == 0 || degrees % 360 == 0) return;
                 else if(degrees % 270 == 0) degrees = 3;
         else if(degrees % 180 == 0) degrees = 2;
@@ -235,5 +254,31 @@ void Image::resize(double factor){
                         Image::h /= 2;
                         Image::w /= 2;
         }
-        else throw string("Invalid factor for resize");
+        else throw string(to_string(factor) + "is an invalid factor for resize");
+}
+
+Image &Image::operator-=(const Image &a){
+	Image::min(a);
+	return *this;
+}
+
+Image &Image::operator+=(const Image &a){
+	Image::max(a);
+	return *this;
+}
+
+Image &Image::operator/=(const double d){
+	if(d == 0) throw string("cannot divide by 0");
+	Image::resize(1/d);
+	return *this;
+}
+
+Image &Image::operator*=(const double d){
+	Image::resize(d);
+	return *this;
+}
+
+Image::operator bool() const{
+	if(!Image::empty()) return true;
+	else return false;
 }

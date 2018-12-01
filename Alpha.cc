@@ -37,8 +37,8 @@ void Alpha::read(const string filename){
                 for(unsigned int i = 0; i < in.length(); i++){
                         if(in[i] == '#') break;
                         else if(isalpha(in[i])){
-				int c(tolower(in[i]) - 122); 
-                                temp.push_back(abs(c));
+							int c(tolower(in[i]) - 122); 
+                            temp.push_back(abs(c));
                         }
                         else if(in[i] == ' ' || in[i] == '\t') continue;
                         else if(in[i] == '*'){

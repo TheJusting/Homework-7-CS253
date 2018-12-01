@@ -43,6 +43,66 @@ Image &Image::operator=(const Image &a){
 
 Image::~Image(){}
 
+Image::iterator(): row(0), it(v[0].begin(){}
+
+Image::iterator(int rowVal, const vector<int>::iterator &iter) : row(rowVal), it(iter){}
+
+Image::iterator(const Image::iterator &iter) : itr(iter.itr), itc(iter.itc){}
+
+Image::iterator &operator=(const Image::iterator &iter){
+	return Image::iterator(iter);
+}
+
+Image::iterator Image::iterator::begin() const{
+	return Image::iterator(0, it.begin());
+}
+
+Image::iterator Image::iterator::end() const{
+	return Image::iterator((int)v.size()-1, v[row].end());
+}
+
+Image::iterator &operator++(){
+	if(*it == *(v[row].end()-1)){
+		++row;
+		it = v[row].begin();
+	}
+	else ++it;
+	return *this;
+}
+
+Image::iterator &operator++(int){
+	const auto temp = *this;
+	++*this;
+	return temp;
+}
+
+Image::iterator &operator--(){
+	if(*it == *(v[row].begin())){
+		--row;
+		it = v[row].end()-1;
+	}
+	else --it;
+	return *this;
+}
+
+Image::iterator &operator--(int){
+	const auto temp = *this;
+	--*this;
+	return temp;
+}
+
+int &operator*() const{
+	return *it;
+}
+
+bool &operator==(const Image::iterator &iter) const{
+	return *it == *iter;
+}
+
+bool &operator!=(const Image::iterator &iter) const{
+	return *it != *iter;
+}
+
 void Image::min(const Image &a){
 	Image::min(Image::NW, a);
 }
@@ -281,4 +341,30 @@ Image &Image::operator*=(const double d){
 Image::operator bool() const{
 	if(!Image::empty()) return true;
 	else return false;
+}
+
+std::ostream &operator<<(std::ostream &os, const Image &a){
+	string temp(a.image + "\n");
+	if(h != -1 && w != -1 && maxp != -1){
+		temp += a.w + " " + a.h + "\n" + maxp + "\n";
+	}
+	for(auto i : a.v){
+		for(auto j : i){
+			temp += j;
+		}
+		temp += "\n";
+	}
+	return temp;
+}
+
+std::istream &operator>>(std::istream &is, const Image &a){
+	try{
+		string temp;
+		is >> temp;
+		if((temp == "P2" && image == "Alpha") || (temp == "Alpha" && image == "P2")) throw string("err");
+		
+	catch(string err){
+		is.setstate(failbit);
+		return is;
+	}
 }

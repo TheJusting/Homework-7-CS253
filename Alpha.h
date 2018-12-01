@@ -3,6 +3,7 @@
 #include "Image.h"
 #include <vector>
 #include <string>
+#include <ostream>
 using string = std::string;
 class Alpha : public Image{
         public:

@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-std=c++11 -Wall -Wextra -Wpedantic -Werror -Wfatal-errors
-assignment = hw6
+assignment = hw7
 lib=$(assignment).a
 
 $(lib): Alpha.o PGM.o Image.o

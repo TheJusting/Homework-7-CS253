@@ -11,12 +11,11 @@ class Image{
 			static Image* create(const string filename);
 			virtual ~Image();
 			class iterator{
-				std::vector<int>::iterator it;
-				int row;
-				iterator(int rowVal, vector<int>::iterator &iter);
+				int row, col;
 				public:
-					iterator();
+					iterator(int r = 0, int c = 0);
 					iterator(const iterator &iter);
+					iterator &operator=(const iterator &iter);
 					iterator begin() const;
 					iterator end() const;
 					iterator &operator++();
@@ -26,7 +25,7 @@ class Image{
 					int &operator*() const;
 					bool &operator==(const iterator &iter) const;
 					bool &operator!=(const iterator &iter) const;
-			}
+			};
 			bool empty() const;
 			int height() const;
 			int width() const;

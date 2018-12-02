@@ -43,64 +43,63 @@ Image &Image::operator=(const Image &a){
 
 Image::~Image(){}
 
-Image::iterator(): row(0), it(v[0].begin(){}
+Image::iterator::iterator(int r, int c) : row(r), col(c){}
 
-Image::iterator(int rowVal, const vector<int>::iterator &iter) : row(rowVal), it(iter){}
+Image::iterator::iterator(const Image::iterator &iter) : row(iter.row), col(iter.col){}
 
-Image::iterator(const Image::iterator &iter) : itr(iter.itr), itc(iter.itc){}
-
-Image::iterator &operator=(const Image::iterator &iter){
-	return Image::iterator(iter);
-}
-
-Image::iterator Image::iterator::begin() const{
-	return Image::iterator(0, it.begin());
-}
-
-Image::iterator Image::iterator::end() const{
-	return Image::iterator((int)v.size()-1, v[row].end());
-}
-
-Image::iterator &operator++(){
-	if(*it == *(v[row].end()-1)){
-		++row;
-		it = v[row].begin();
-	}
-	else ++it;
+Image::iterator &Image::iterator::operator=(const Image::iterator &iter){
+	*this = Image::iterator(iter);
 	return *this;
 }
 
-Image::iterator &operator++(int){
+Image::iterator Image::iterator::begin() const{ 
+	return Image::iterator();
+}
+
+Image::iterator Image::iterator::end() const{
+	return Image::iterator(h, w);
+}
+
+Image::iterator &Image::iterator::operator++(){
+	if(col == Image::width()-1){
+		++row;
+		col = 0;
+	}
+	else ++col;
+	return *this;
+}
+
+Image::iterator &Image::iterator::operator++(int){
 	const auto temp = *this;
 	++*this;
 	return temp;
 }
 
-Image::iterator &operator--(){
-	if(*it == *(v[row].begin())){
+Image::iterator &Image::iterator::operator--(){
+	if(c == 0){
 		--row;
-		it = v[row].end()-1;
+		col = Image::width() - 1;
 	}
-	else --it;
+	else --col;
 	return *this;
 }
 
-Image::iterator &operator--(int){
+Image::iterator &Image::iterator::operator--(int){
 	const auto temp = *this;
 	--*this;
 	return temp;
 }
 
-int &operator*() const{
-	return *it;
+int &Image::iterator::operator*() const{
+	return Image::get(col, row);
 }
 
-bool &operator==(const Image::iterator &iter) const{
-	return *it == *iter;
+bool &Image::iterator::operator==(const Image::iterator &iter) const{
+	return Image::get(col, row) == Image::get(iter.col, iter.row);
 }
 
-bool &operator!=(const Image::iterator &iter) const{
-	return *it != *iter;
+bool &Image::iterator::operator!=(const Image::iterator &iter) const{
+	return Image::get(col, row) != Image::get(iter.col, iter.row);
 }
 
 void Image::min(const Image &a){
